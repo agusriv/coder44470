@@ -2,13 +2,14 @@ from django.http import HttpResponse
 from appcoder.models import Curso
 
 
-# Create your views here.
 
 def listado_cursos(request):
     cursos = Curso.objects.all()
 
-    cadena_respuesta = ""
+    # Respuesta casera
+    cadena_respuesta = "<ul>"
     for curso in cursos:
-        cadena_respuesta += f"({curso.nombre},{curso.camada})" + " | "
-    
+        cadena_respuesta += f"<li>({curso.nombre},{curso.camada}) </li>"
+    cadena_respuesta += "</ul>"
+
     return HttpResponse(cadena_respuesta)
