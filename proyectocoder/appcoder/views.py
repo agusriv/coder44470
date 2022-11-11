@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from appcoder.models import Curso, Profesor
-from appcoder.forms import ProfesorFormulario
+from appcoder.models import Curso, Profesor, Estudiante
+from appcoder.forms import ProfesorFormulario, EstudianteFormulario
 from django.shortcuts import render
 
 
@@ -27,12 +27,26 @@ def creacion_curso(request):
 def estudiantes(request):
     return render(request, "appcoder/estudiantes.html")
 
+
+def creacion_estudiantes(request):
+
+    if request.method == "POST":
+        formulario = EstudianteFormulario(request.POST)
+        
+        if formulario.is_valid():
+            # Accedemos al diccionario que contiene
+            # la informacion del formulario
+            data = formulario.cleaned_data
+
+            estudiante = Estudiante(nombre=data["nombre"], apellido=data["apellido"], email=data["email"])
+            estudiante.save()
+
+    formulario = EstudianteFormulario()
+    return render(request, "appcoder/estudiantes_formulario.html", {"formulario": formulario})
+
+
 def profesores(request):
     return render(request, "appcoder/profesores.html")
-
-
-
-
 
 
 
@@ -75,6 +89,17 @@ def resultados_busqueda_cursos(request):
 
 
 
+def buscar_alumnos(request):
+
+    if request.GET:
+        nombre_alumno = request.GET.get("nombre_alumno", "")
+        if nombre_alumno == "":
+            estudiantes = []
+        else:
+            estudiantes = Estudiante.objects.filter(nombre__icontains=nombre_alumno)
+        return render(request, "appcoder/busqueda_estudiantes.html", {"listado_alumnos": estudiantes})
+
+    return render(request, "appcoder/busqueda_estudiantes.html", {"listado_alumnos": []})
 
 
 
