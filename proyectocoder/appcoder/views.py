@@ -3,6 +3,9 @@ from appcoder.models import Curso, Profesor, Estudiante
 from appcoder.forms import ProfesorFormulario, EstudianteFormulario
 from django.shortcuts import render
 
+# Dependencias para resolver apertura de archivos usando rutas relativas
+from proyectocoder.settings import BASE_DIR
+import os
 
 def inicio(request):
     return render(request, "appcoder/index.html")
@@ -118,3 +121,10 @@ def entregables(request):
 #     cadena_respuesta += "</ul>"
 
 #     return HttpResponse(cadena_respuesta)
+
+def test(request):
+    ruta = os.path.join(BASE_DIR, "appcoder/templates/appcoder/base.html")
+    print(BASE_DIR, __file__)
+    file = open(ruta)
+
+    return HttpResponse(file.read())
