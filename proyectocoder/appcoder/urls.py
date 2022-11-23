@@ -24,5 +24,6 @@ urlpatterns = [
     path("test/", test),
     path("login/", iniciar_sesion, name="auth-login"),
     path("register/", registrar_usuario, name="auth-register"),
-    path("logout/", LogoutView.as_view(), name="auth-logout")
+    path("logout/", LogoutView.as_view(), name="auth-logout"),
+    path("perfil/editar/", editar_perfil, name="auth-editar-perfil")
 ]
