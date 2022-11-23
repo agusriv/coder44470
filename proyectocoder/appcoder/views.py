@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from appcoder.models import Curso, Profesor, Estudiante, Entregable
+from appcoder.models import Curso, Profesor, Estudiante, Entregable, Avatar
 from appcoder.forms import ProfesorFormulario, EstudianteFormulario, CursoFormulario, UserRegisterForm, UserEditForm
 from django.shortcuts import render, redirect
 
@@ -17,7 +17,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
 def inicio(request):
-    return render(request, "appcoder/index.html")
+    if request.user.is_authenticated:
+        imagen_model = Avatar.objects.filter(user= request.user.id)[0]
+        imagen_url = imagen_model.imagen.url
+    else:
+        imagen_url = ""
+    return render(request, "appcoder/index.html", {"imagen_url": imagen_url})
 
 @login_required
 def cursos(request):
