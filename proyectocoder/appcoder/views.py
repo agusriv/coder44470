@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from appcoder.models import Curso, Profesor, Estudiante, Entregable, Avatar
-from appcoder.forms import ProfesorFormulario, EstudianteFormulario, CursoFormulario, UserRegisterForm, UserEditForm
+from appcoder.forms import ProfesorFormulario, EstudianteFormulario, CursoFormulario, UserRegisterForm, UserEditForm, AvatarForm
 from django.shortcuts import render, redirect
 
 # Dependencias para resolver apertura de archivos usando rutas relativas
@@ -18,7 +18,7 @@ from django.contrib.auth.decorators import login_required
 
 def inicio(request):
     if request.user.is_authenticated:
-        imagen_model = Avatar.objects.filter(user= request.user.id)[0]
+        imagen_model = Avatar.objects.filter(user= request.user.id).order_by("-id")[0]
         imagen_url = imagen_model.imagen.url
     else:
         imagen_url = ""
@@ -275,3 +275,25 @@ def editar_perfil(request):
         formulario = UserEditForm(initial = {"email": usuario.email, "first_name": usuario.first_name, "last_name": usuario.last_name})
 
     return render(request, "appcoder/editar_perfil.html", {"form": formulario})
+
+
+@login_required
+def agregar_avatar(request):
+    
+    if request.method == "POST":
+        formulario = AvatarForm(request.POST, files=request.FILES)
+        print(request.FILES, request.POST)
+        if formulario.is_valid():
+            data = formulario.cleaned_data
+
+            usuario = request.user
+
+            avatar = Avatar(user=usuario, imagen=data["imagen"])
+            avatar.save()
+
+            return redirect("coder-inicio")
+        else:
+            return render(request, "appcoder/agregar_avatar.html", {"form": formulario, "errors": formulario.errors })
+    formulario = AvatarForm()
+
+    return render(request, "appcoder/agregar_avatar.html", {"form": formulario})
